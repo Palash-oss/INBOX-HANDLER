@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { EnrichedSignal, ProjectConfig } from "@/types";
+import { formatSignalDate, formatSignalTime } from "@/lib/formatters";
 
 interface SignalCardProps {
   signal: EnrichedSignal;
@@ -155,14 +156,20 @@ export function SignalCard({ signal, projectsConfig, searchQuery, onSelect }: Si
 
         {/* Right Column: Date, Time & Link */}
         <div className="flex md:flex-col md:items-end justify-between items-center text-xs font-mono text-zinc-500 space-y-1.5">
-          <div className="flex items-center space-x-2">
-            <span className="flex items-center space-x-1 text-zinc-900 font-bold">
+          <div className="flex items-center space-x-2.5">
+            <span
+              className="flex items-center space-x-1.5 text-zinc-900 font-bold"
+              title={`Original ISO Date: ${signal.date}`}
+            >
               <Calendar className="h-3.5 w-3.5 text-emerald-600" />
-              <span>{signal.date}</span>
+              <span>{formatSignalDate(signal.date)}</span>
             </span>
-            <span className="flex items-center space-x-1 text-zinc-500">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{signal.time}</span>
+            <span
+              className="flex items-center space-x-1 text-zinc-600 font-semibold"
+              title={`Original 24h Time: ${signal.time}`}
+            >
+              <Clock className="h-3.5 w-3.5 text-zinc-400" />
+              <span>{formatSignalTime(signal.time)}</span>
             </span>
           </div>
 

@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react";
 import { EnrichedSignal, ProjectConfig } from "@/types";
+import { formatSignalDate, formatSignalTime } from "@/lib/formatters";
 
 interface SignalDrawerProps {
   signal: EnrichedSignal | null;
@@ -147,7 +148,9 @@ export function SignalDrawer({
                 </div>
                 <div className="pt-1 text-[11px] text-zinc-500 flex items-center justify-between">
                   <span>Match Key: {signal.match_key}</span>
-                  <span>Detected On: {signal.detected_on}</span>
+                  <span title="When the automated ingestion run processed this recording">
+                    Ingest Run: {formatSignalDate(signal.detected_on)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -157,11 +160,16 @@ export function SignalDrawer({
               <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
                 <span className="text-xs font-mono font-bold text-zinc-500 flex items-center mb-1 uppercase">
                   <Calendar className="h-3.5 w-3.5 mr-1 text-emerald-600" />
-                  Timestamp
+                  Meeting Time
                 </span>
-                <span className="text-sm font-bold text-zinc-900 font-mono">
-                  {signal.date} at {signal.time}
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-zinc-900 font-mono">
+                    {formatSignalDate(signal.date)} · {formatSignalTime(signal.time)}
+                  </span>
+                  <span className="text-[10px] text-zinc-500 font-mono mt-0.5">
+                    Recorded: {signal.date} at {signal.time}
+                  </span>
+                </div>
               </div>
 
               <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
