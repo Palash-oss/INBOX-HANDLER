@@ -17,6 +17,8 @@ export function Header({ totalSignals, unroutedCount, onOpenExplainer }: HeaderP
         <div className="flex items-center space-x-3.5">
           <div className="h-10 w-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-md">
             <svg
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

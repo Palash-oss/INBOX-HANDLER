@@ -1049,8 +1049,14 @@
       ],
       "summary": null,
       "expected_files": [],
-      "notes": null,
-      "status": {},
+      "notes": "Checked and done",
+      "status": {
+        "studio_ops": {
+          "state": "analyzed",
+          "files_reviewed": [],
+          "analyzed_at": "2026-09-28"
+        }
+      },
       "sources": {
         "granola_note": null,
         "transcript": null,
