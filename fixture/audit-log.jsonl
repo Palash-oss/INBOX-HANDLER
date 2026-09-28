@@ -1,0 +1,1 @@
+{"timestamp":"2026-09-28T10:11:30.024Z","action":"triage","signalId":"2026-08-27_weekly_standup","changes":{"projects":{"from":["studio_ops"],"to":["studio_ops","northwind"]},"status.northwind":{"from":{"state":"pending","files_reviewed":[]},"to":{"state":"analyzed","files_reviewed":[],"analyzed_at":"2026-09-28"}}},"by":"web-operator"}

@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-primary: #059669;
+  --color-danger: #e11d48;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: #09090b;
+  min-height: 100vh;
+  overflow-x: hidden;
+  letter-spacing: -0.015em;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-sans);
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+code, kbd, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Custom Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+
+/* Search Term Highlight */
+mark {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-weight: 700;
+  border-bottom: 2px solid #10b981;
+}
