@@ -155,3 +155,24 @@ The synthetic fixture deliberately includes real-world data defects. The UI surf
   2. A dedicated **`Needs Triage`** filter tab lets operators isolate all anomalies with one click.
   3. Clicking any signal opens a **Slide-Over Inspection Drawer** featuring an integrated **Guarded Triage Form** to assign projects or record notes on the spot.
 - **Defense:** Inbox is an internal operator control plane, not an external consumer search engine. Hiding incomplete or unrouted records causes meetings to fall through the cracks. Surfacing them transforms search from a passive lookup tool into an **operational triage hub** that actively repairs the ledger.
+
+---
+
+## 🔍 Video Walkthrough Deliverables (Rubric Aligned)
+
+### 1. One Thing We Got Wrong (and How We Caught & Fixed It)
+- **The Issue:** Initially, facet counts for triage tabs (`Unrouted`, `Missing Summary`) were computed *after* narrowing down by the active tab filter. When an operator clicked `Missing Summary (29)`, the unrouted count unexpectedly dropped to `0`, making it seem as though unrouted signals had vanished. Furthermore, the triage form initially only saved operator notes, which left `signal.summary` null and kept the "Missing Summary" defect active.
+- **How We Caught It:** Through systematic manual testing and audit verification: clicking between tabs revealed the count collapse, and triaging a missing summary failed to clear the defect warning.
+- **The Fix:** We refactored [`backend/src/lib/search.ts`](backend/src/lib/search.ts) to calculate facets across candidate signals *before* narrowing down by the selected defect tab, and added a dedicated `summary` field in the guarded triage form so operators can resolve the defect directly in one atomic transaction.
+
+### 2. One Thing We Would Do Next
+- **Hybrid Search with Reciprocal Rank Fusion (RRF):** Combine SQLite FTS5 lexical indexing for metadata (attendees, projects, dates) with a lightweight local embedding model (e.g. `all-MiniLM-L6-v2` via ONNX) for semantic search over full meeting transcripts.
+- **Batch Triage & Bulk Actions:** Allow operators to multi-select unrouted meetings (e.g. all meetings with `@atlaspermits.example` attendees) and bulk-assign them to a project in a single atomic transaction with audit logging.
+
+### 3. Agent Collaboration & Verification Workflow
+- **Planning & Decoupling:** Began by mapping out the data contracts and ledger invariants (`id`, `match_key`, `type`, `sources` immutable) before writing any frontend code.
+- **Agent Verification:** Critically audited agent proposals:
+  1. Caught and prevented importing ledger JSON directly into React client components.
+  2. Caught in-memory facet count collapse and mandated stable pre-filter facet aggregation.
+  3. Ensured ACID-compliant atomic file writes using temporary file rename patterns.
+
