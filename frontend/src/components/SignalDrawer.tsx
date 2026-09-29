@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Calendar,
@@ -14,6 +14,10 @@ import {
   Loader2,
   Copy,
   Check,
+  Video,
+  Play,
+  FileCode,
+  Sparkles,
 } from "lucide-react";
 import { EnrichedSignal, ProjectConfig } from "@/types";
 import { formatSignalDate, formatSignalTime } from "@/lib/formatters";
@@ -32,12 +36,27 @@ export function SignalDrawer({
   onSignalUpdated,
 }: SignalDrawerProps) {
   const [selectedProject, setSelectedProject] = useState<string>("");
+  const [summaryInput, setSummaryInput] = useState<string>("");
   const [notesInput, setNotesInput] = useState<string>("");
   const [statusState, setStatusState] = useState<"analyzed" | "pending" | "deferred">("analyzed");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [triageSuccess, setTriageSuccess] = useState<string | null>(null);
   const [triageError, setTriageError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+
+  // Sync state whenever active signal changes
+  useEffect(() => {
+    if (signal) {
+      const initialProject = signal.projects[0] === "internal_unsorted" ? "" : signal.projects[0] || "";
+      setSelectedProject(initialProject);
+      setSummaryInput(signal.summary || "");
+      setNotesInput(signal.notes || "");
+      const existingStatus = Object.values(signal.status)[0]?.state;
+      setStatusState(existingStatus || "analyzed");
+      setTriageSuccess(null);
+      setTriageError(null);
+    }
+  }, [signal?.id]);
 
   if (!signal) return null;
 
@@ -57,15 +76,16 @@ export function SignalDrawer({
       const payload: Record<string, unknown> = {};
       if (selectedProject) {
         payload.projectToAdd = selectedProject;
-      }
-      if (notesInput) {
-        payload.notes = notesInput;
-      }
-      if (selectedProject) {
         payload.statusUpdate = {
           project: selectedProject,
           state: statusState,
         };
+      }
+      if (summaryInput.trim()) {
+        payload.summary = summaryInput.trim();
+      }
+      if (notesInput.trim()) {
+        payload.notes = notesInput.trim();
       }
 
       const res = await fetch(`/api/signals/${signal.id}/triage`, {
@@ -79,7 +99,12 @@ export function SignalDrawer({
         throw new Error(data.error || "Failed to update signal via guarded path.");
       }
 
-      setTriageSuccess(data.message || "Updated successfully via guarded atomic write.");
+      const hasResolvedSummary = summaryInput.trim() && signal.defects.isMissingSummary;
+      const successMsg = hasResolvedSummary
+        ? "Signal updated successfully! Missing Summary defect resolved."
+        : data.message || "Updated successfully via guarded atomic write.";
+
+      setTriageSuccess(successMsg);
       if (data.signal) {
         onSignalUpdated(data.signal);
       }
@@ -276,6 +301,102 @@ export function SignalDrawer({
               </div>
             </div>
 
+            {/* Source Materials & Recording Artifacts */}
+            <div className="space-y-3">
+              <span className="text-xs font-mono font-bold text-zinc-700 uppercase tracking-wider flex items-center">
+                <Video className="h-3.5 w-3.5 mr-1.5 text-purple-600" />
+                Source Materials &amp; Media Recording
+              </span>
+
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200 space-y-3">
+                {/* Video Item */}
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="h-8 w-8 rounded-lg bg-purple-100 border border-purple-200 text-purple-700 flex items-center justify-center flex-shrink-0">
+                      <Video className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-mono font-bold text-zinc-900 flex items-center space-x-2">
+                        <span>Video Recording (.mp4)</span>
+                        {signal.sources.recording ? (
+                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                            Attached
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500 border border-zinc-200 text-[10px]">
+                            Not Captured
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] font-mono text-zinc-600 break-all select-all">
+                        {signal.sources.recording ? signal.sources.recording : "No video source recorded"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {signal.sources.recording && (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 whitespace-nowrap">
+                      1080p MP4
+                    </span>
+                  )}
+                </div>
+
+                {/* Video Player / Ingest Stream Mockup */}
+                {signal.sources.recording ? (
+                  <div className="rounded-xl border border-zinc-300 bg-zinc-950 p-4 text-center text-white space-y-2 relative overflow-hidden group shadow-inner">
+                    <div className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mx-auto text-emerald-400 group-hover:scale-110 transition-transform">
+                      <Play className="h-5 w-5 fill-current ml-0.5" />
+                    </div>
+                    <div className="text-xs font-mono font-bold tracking-tight">
+                      {signal.title} — Meeting Recording
+                    </div>
+                    <p className="text-[10px] font-mono text-zinc-400">
+                      Recorded {formatSignalDate(signal.date)} at {formatSignalTime(signal.time)} • File: {signal.sources.recording.split("/").pop()}
+                    </p>
+                    <div className="pt-1 text-[10px] font-mono text-emerald-400/90 flex items-center justify-center space-x-1">
+                      <Sparkles className="h-3 w-3" />
+                      <span>Fixture Ingest Storage Reference Verified</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-lg bg-zinc-100 border border-zinc-200 text-zinc-500 text-xs font-mono">
+                    Host did not record video for this meeting.
+                  </div>
+                )}
+
+                {/* Transcripts & Granola Files */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  {/* Transcript */}
+                  <div className="p-2.5 rounded-lg bg-white border border-zinc-200 text-xs font-mono">
+                    <div className="flex items-center justify-between text-zinc-500 text-[10px] uppercase font-bold mb-1">
+                      <span className="flex items-center space-x-1">
+                        <FileText className="h-3 w-3 text-sky-600" />
+                        <span>Transcript (.txt)</span>
+                      </span>
+                      <span>{signal.sources.transcript ? "Available" : "None"}</span>
+                    </div>
+                    <div className="text-zinc-900 font-semibold truncate text-[11px]" title={signal.sources.transcript || ""}>
+                      {signal.sources.transcript ? signal.sources.transcript.split("/").pop() : "No transcript file"}
+                    </div>
+                  </div>
+
+                  {/* Granola Note */}
+                  <div className="p-2.5 rounded-lg bg-white border border-zinc-200 text-xs font-mono">
+                    <div className="flex items-center justify-between text-zinc-500 text-[10px] uppercase font-bold mb-1">
+                      <span className="flex items-center space-x-1">
+                        <FileCode className="h-3 w-3 text-emerald-600" />
+                        <span>Granola Note (.md)</span>
+                      </span>
+                      <span>{signal.sources.granola_note ? "Available" : "None"}</span>
+                    </div>
+                    <div className="text-zinc-900 font-semibold truncate text-[11px]" title={signal.sources.granola_note || ""}>
+                      {signal.sources.granola_note ? signal.sources.granola_note.split("/").pop() : "No granola note"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Guarded Triage Form */}
             <div className="pt-4 border-t border-zinc-200">
               <div className="p-5 rounded-xl bg-emerald-50/50 border-2 border-emerald-300 space-y-4 shadow-sm">
@@ -325,6 +446,27 @@ export function SignalDrawer({
                     </div>
                   )}
 
+                  {/* Summary Field (Resolves Missing Summary Defect) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-mono font-bold text-zinc-700 uppercase">
+                        Meeting Summary:
+                      </label>
+                      {signal.defects.isMissingSummary && !signal.summary && (
+                        <span className="text-[10px] font-mono text-amber-800 font-bold bg-amber-50 border border-amber-300 px-2 py-0.5 rounded">
+                          Fill to resolve Missing Summary
+                        </span>
+                      )}
+                    </div>
+                    <textarea
+                      value={summaryInput}
+                      onChange={(e) => setSummaryInput(e.target.value)}
+                      rows={2}
+                      placeholder="Enter verified meeting summary or decision..."
+                      className="w-full bg-white border border-zinc-300 focus:border-emerald-600 rounded-lg px-3 py-2 text-xs font-mono text-zinc-900 focus:outline-none"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-xs font-mono font-bold text-zinc-700 mb-1 uppercase">
                       Append Verified Notes:
@@ -354,7 +496,7 @@ export function SignalDrawer({
                   <button
                     type="submit"
                     suppressHydrationWarning
-                    disabled={isSubmitting || (!selectedProject && !notesInput)}
+                    disabled={isSubmitting || (!selectedProject && !notesInput && !summaryInput)}
                     className="w-full py-3 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 shadow-sm transition-all cursor-pointer"
                   >
                     {isSubmitting ? (

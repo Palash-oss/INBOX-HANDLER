@@ -127,55 +127,38 @@ export function searchAndFilterSignals(
   }
 
   // Step 2: Project Filter
+  let filteredByProject = results;
   if (filters.project && filters.project !== "all") {
-    results = results.filter((s) => s.projects.includes(filters.project!));
+    filteredByProject = filteredByProject.filter((s) => s.projects.includes(filters.project!));
   }
 
   // Step 3: Status Filter
+  let filteredByStatus = filteredByProject;
   if (filters.status && filters.status !== "all") {
     if (filters.status === "unrouted") {
-      results = results.filter(
+      filteredByStatus = filteredByStatus.filter(
         (s) => s.projects.includes("internal_unsorted") || Object.keys(s.status).length === 0
       );
     } else {
-      results = results.filter((s) =>
+      filteredByStatus = filteredByStatus.filter((s) =>
         Object.values(s.status).some((st) => st.state === filters.status)
       );
     }
   }
 
-  // Step 4: Defect / Triage Filter
-  if (filters.defect && filters.defect !== "none") {
-    if (filters.defect === "all") {
-      results = results.filter(
-        (s) =>
-          s.defects.isUnrouted ||
-          s.defects.isMissingSummary ||
-          s.defects.hasDanglingRun ||
-          s.defects.isDuplicate
-      );
-    } else if (filters.defect === "unrouted") {
-      results = results.filter((s) => s.defects.isUnrouted);
-    } else if (filters.defect === "missing_summary") {
-      results = results.filter((s) => s.defects.isMissingSummary);
-    } else if (filters.defect === "dangling_run") {
-      results = results.filter((s) => s.defects.hasDanglingRun);
-    } else if (filters.defect === "duplicate") {
-      results = results.filter((s) => s.defects.isDuplicate);
-    }
-  }
-
-  // Step 5: Date Range Filter
+  // Step 4: Date Range Filter
+  let filteredByDate = filteredByStatus;
   if (filters.dateFrom) {
-    results = results.filter((s) => s.date >= filters.dateFrom!);
+    filteredByDate = filteredByDate.filter((s) => s.date >= filters.dateFrom!);
   }
   if (filters.dateTo) {
-    results = results.filter((s) => s.date <= filters.dateTo!);
+    filteredByDate = filteredByDate.filter((s) => s.date <= filters.dateTo!);
   }
 
-  // Step 6: Source Feed Filter
+  // Step 5: Source Feed Filter
+  let filteredByFeed = filteredByDate;
   if (filters.feed) {
-    results = results.filter((s) => {
+    filteredByFeed = filteredByFeed.filter((s) => {
       if (filters.feed === "granola") return Boolean(s.sources.granola_note);
       if (filters.feed === "transcript") return Boolean(s.sources.transcript);
       if (filters.feed === "recording") return Boolean(s.sources.recording);
@@ -183,7 +166,32 @@ export function searchAndFilterSignals(
     });
   }
 
-  // Calculate facets from unpaginated filtered results (for badges in UI)
+  // Candidates before applying the active defect tab filter (for stable triage facet counts!)
+  const defectCandidates = filteredByFeed;
+
+  // Step 6: Defect / Triage Filter (applied to final displayed results)
+  let finalResults = defectCandidates;
+  if (filters.defect && filters.defect !== "none") {
+    if (filters.defect === "all") {
+      finalResults = finalResults.filter(
+        (s) =>
+          s.defects.isUnrouted ||
+          s.defects.isMissingSummary ||
+          s.defects.hasDanglingRun ||
+          s.defects.isDuplicate
+      );
+    } else if (filters.defect === "unrouted") {
+      finalResults = finalResults.filter((s) => s.defects.isUnrouted);
+    } else if (filters.defect === "missing_summary") {
+      finalResults = finalResults.filter((s) => s.defects.isMissingSummary);
+    } else if (filters.defect === "dangling_run") {
+      finalResults = finalResults.filter((s) => s.defects.hasDanglingRun);
+    } else if (filters.defect === "duplicate") {
+      finalResults = finalResults.filter((s) => s.defects.isDuplicate);
+    }
+  }
+
+  // Calculate facets from defectCandidates (so selecting one tab does NOT zero out the others!)
   const projectFacets: Record<string, number> = {};
   const statusFacets: Record<string, number> = {
     analyzed: 0,
@@ -199,12 +207,15 @@ export function searchAndFilterSignals(
     duplicate: 0,
   };
 
+  // Global project counts across current search query
   for (const s of results) {
-    // Project facets
     for (const p of s.projects) {
       projectFacets[p] = (projectFacets[p] || 0) + 1;
     }
+  }
 
+  // Status and defect counts computed across candidate signals before defect filter
+  for (const s of defectCandidates) {
     // Status facets
     const states = Object.values(s.status).map((st) => st.state);
     if (states.length === 0 || s.projects.includes("internal_unsorted")) {
@@ -231,6 +242,8 @@ export function searchAndFilterSignals(
       if (s.defects.isDuplicate) defectFacets.duplicate++;
     }
   }
+
+  results = finalResults;
 
   // Step 7: Sorting
   const sort = filters.sort || (tokens.length > 0 ? "relevance" : "date_desc");
