@@ -46,6 +46,15 @@ code, kbd, pre, .font-mono {
   background: #a1a1aa;
 }
 
+/* Hide scrollbar utility for touch/swipe containers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Search Term Highlight */
 mark {
   background-color: #d1fae5;

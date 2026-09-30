@@ -20,27 +20,28 @@ export function ModelExplainerModal({ isOpen, onClose }: ModelExplainerModalProp
           onClick={onClose}
         />
 
-        <div className="inline-block w-full max-w-3xl p-6 sm:p-8 my-8 text-left align-middle transition-all transform bg-white border border-zinc-200 rounded-2xl shadow-2xl relative z-10 space-y-6">
+        <div className="inline-block w-full max-w-3xl p-4 sm:p-8 my-4 sm:my-8 text-left align-middle transition-all transform bg-white border border-zinc-200 rounded-2xl shadow-2xl relative z-10 space-y-5 sm:space-y-6 max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-zinc-200 pb-4">
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs">
-                <Scale className="h-5 w-5 text-emerald-700" />
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-3 sm:pb-4">
+            <div className="flex items-center space-x-2.5 sm:space-x-3">
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-xs shrink-0">
+                <Scale className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-emerald-700" />
               </div>
               <div>
-                <h3 className="text-xl font-extrabold text-zinc-950 uppercase tracking-tight">
-                  Architecture &amp; Product Decisions Memo
+                <h3 className="text-base sm:text-xl font-extrabold text-zinc-950 uppercase tracking-tight">
+                  Architecture &amp; Product Memo
                 </h3>
-                <p className="text-xs font-mono text-zinc-500">
+                <p className="text-[11px] sm:text-xs font-mono text-zinc-500">
                   Supanova Labs Internal Ledger Search Evaluation
                 </p>
               </div>
             </div>
 
             <button
+              type="button"
               suppressHydrationWarning
               onClick={onClose}
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 cursor-pointer"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 cursor-pointer shrink-0"
             >
               <X className="h-5 w-5" />
             </button>

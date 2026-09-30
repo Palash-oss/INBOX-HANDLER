@@ -12,17 +12,17 @@ interface HeaderProps {
 export function Header({ totalSignals, unroutedCount, onOpenExplainer }: HeaderProps) {
   return (
     <header className="border-b border-zinc-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 min-h-16 flex items-center justify-between py-2.5 sm:py-3">
         {/* Brand / Logo */}
-        <div className="flex items-center space-x-3.5">
-          <div className="h-10 w-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-md">
+        <div className="flex items-center space-x-2.5 sm:space-x-3.5">
+          <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-zinc-950 flex items-center justify-center shadow-md shrink-0">
             <svg
               width="24"
               height="24"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-[#10b981]"
+              className="h-5 w-5 sm:h-6 sm:w-6 text-[#10b981]"
             >
               <path
                 d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z"
@@ -40,26 +40,26 @@ export function Header({ totalSignals, unroutedCount, onOpenExplainer }: HeaderP
           </div>
 
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-zinc-950 text-xl tracking-tight uppercase">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <span className="font-extrabold text-zinc-950 text-lg sm:text-xl tracking-tight uppercase">
                 Supanova
               </span>
               <span className="text-zinc-300 font-light">/</span>
-              <span className="font-mono text-emerald-600 font-bold text-sm tracking-wider uppercase">
+              <span className="font-mono text-emerald-600 font-bold text-xs sm:text-sm tracking-wider uppercase">
                 Inbox
               </span>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 tracking-wider uppercase">
+              <span className="hidden sm:inline-block text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 tracking-wider uppercase">
                 v4 Ledger
               </span>
             </div>
-            <p className="text-[11px] text-zinc-700 font-mono tracking-tight hidden sm:block">
+            <p className="text-[11px] text-zinc-500 font-mono tracking-tight hidden md:block">
               Continuous Ingest &amp; Deterministic Routing Engine
             </p>
           </div>
         </div>
 
         {/* Telemetry Badges & Design Memo Trigger */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Ingest Telemetry Pill */}
           <div className="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-zinc-100 border border-zinc-200 text-xs font-mono text-zinc-700">
             <span className="relative flex h-2 w-2">
@@ -76,7 +76,7 @@ export function Header({ totalSignals, unroutedCount, onOpenExplainer }: HeaderP
 
           {/* Unrouted Alert Chip */}
           {unroutedCount > 0 && (
-            <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700 font-bold">
+            <div className="hidden sm:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-lg bg-rose-50 border border-rose-200 text-xs font-mono text-rose-700 font-bold">
               <AlertCircle className="h-3.5 w-3.5 text-rose-600" />
               <span>{unroutedCount} Unrouted</span>
             </div>
@@ -84,12 +84,14 @@ export function Header({ totalSignals, unroutedCount, onOpenExplainer }: HeaderP
 
           {/* Architecture / Design Memo Button */}
           <button
+            type="button"
             suppressHydrationWarning
             onClick={onOpenExplainer}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-mono font-bold text-emerald-800 transition-all shadow-xs cursor-pointer"
+            className="flex items-center space-x-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-mono font-bold text-emerald-800 transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
           >
-            <FileCode2 className="h-3.5 w-3.5 text-emerald-700" />
-            <span>LIKE vs Model Memo</span>
+            <FileCode2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
+            <span className="hidden sm:inline">LIKE vs Model Memo</span>
+            <span className="sm:hidden">Architecture</span>
           </button>
         </div>
       </div>

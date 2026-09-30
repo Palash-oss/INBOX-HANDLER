@@ -155,7 +155,7 @@ export function SignalCard({ signal, projectsConfig, searchQuery, onSelect }: Si
         </div>
 
         {/* Right Column: Date, Time & Link */}
-        <div className="flex md:flex-col md:items-end justify-between items-center text-xs font-mono text-zinc-500 space-y-1.5">
+        <div className="flex md:flex-col md:items-end justify-between items-center text-xs font-mono text-zinc-500 gap-2 md:space-y-1.5">
           <div className="flex items-center space-x-2.5">
             <span
               className="flex items-center space-x-1.5 text-zinc-900 font-bold"

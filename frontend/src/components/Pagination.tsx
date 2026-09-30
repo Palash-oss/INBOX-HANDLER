@@ -43,23 +43,23 @@ export function Pagination({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 border-t border-zinc-200 text-xs font-mono text-zinc-500">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pt-5 border-t border-zinc-200 text-xs font-mono text-zinc-500">
       {/* Range and count */}
-      <div className="flex items-center space-x-2">
+      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
         <span>
           Showing <strong className="text-zinc-950">{startItem}</strong> -{" "}
           <strong className="text-zinc-950">{endItem}</strong> of{" "}
           <strong className="text-emerald-700 font-bold">{totalItems}</strong> records
         </span>
 
-        <span className="text-zinc-300">|</span>
+        <span className="text-zinc-300 hidden xs:inline">|</span>
 
         <div className="flex items-center space-x-1.5">
           <span className="uppercase text-[10px] font-bold">Per page:</span>
           <select
             value={limit}
             onChange={(e) => onLimitChange(Number(e.target.value))}
-            className="bg-white border border-zinc-300 rounded px-2 py-0.5 text-zinc-900 font-bold focus:outline-none"
+            className="bg-white border border-zinc-300 rounded px-2 py-0.5 text-zinc-900 font-bold focus:outline-none cursor-pointer"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -69,12 +69,13 @@ export function Pagination({
       </div>
 
       {/* Page navigation buttons */}
-      <div className="flex items-center space-x-1.5">
+      <div className="flex flex-wrap items-center justify-center space-x-1 sm:space-x-1.5">
         <button
+          type="button"
           suppressHydrationWarning
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!hasPrev}
-          className="p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-800 transition-colors cursor-pointer"
+          className="p-1.5 sm:p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-800 transition-colors cursor-pointer"
           title="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -84,9 +85,10 @@ export function Pagination({
           typeof p === "number" ? (
             <button
               key={p}
+              type="button"
               suppressHydrationWarning
               onClick={() => onPageChange(p)}
-              className={`min-w-[34px] h-8 px-2 rounded-lg font-mono font-bold transition-all text-xs cursor-pointer ${
+              className={`min-w-[32px] sm:min-w-[34px] h-8 px-1.5 sm:px-2 rounded-lg font-mono font-bold transition-all text-xs cursor-pointer ${
                 currentPage === p
                   ? "bg-zinc-950 text-white shadow-xs"
                   : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950"
@@ -102,10 +104,11 @@ export function Pagination({
         )}
 
         <button
+          type="button"
           suppressHydrationWarning
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!hasNext}
-          className="p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-800 transition-colors cursor-pointer"
+          className="p-1.5 sm:p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-800 transition-colors cursor-pointer"
           title="Next page"
         >
           <ChevronRight className="h-4 w-4" />

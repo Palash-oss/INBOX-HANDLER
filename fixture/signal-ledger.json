@@ -2338,13 +2338,13 @@
       "projects": [
         "quill"
       ],
-      "summary": null,
+      "summary": "Sprint sync discussing invoice sync error states and quarterly deliverables.",
       "expected_files": [],
-      "notes": null,
+      "notes": "DONE",
       "status": {
         "quill": {
           "state": "analyzed",
-          "analyzed_at": "2026-09-06",
+          "analyzed_at": "2026-09-30",
           "files_reviewed": [
             "sources/granola/2026-09-04-quill_editor_shaping.md",
             "sources/transcripts/2026-09-04-quill_editor_shaping.txt",

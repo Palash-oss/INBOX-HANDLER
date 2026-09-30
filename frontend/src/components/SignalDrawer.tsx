@@ -124,18 +124,19 @@ export function SignalDrawer({
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-2xl bg-white border-l border-zinc-200 shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
+        <div className="w-screen max-w-full sm:max-w-2xl bg-white border-l border-zinc-200 shadow-2xl flex flex-col">
           {/* Drawer Header */}
-          <div className="px-6 py-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
-            <div className="flex items-center space-x-3">
-              <span className="font-extrabold text-zinc-950 text-lg">Signal Inspector</span>
+          <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+            <div className="flex items-center space-x-2.5 sm:space-x-3">
+              <span className="font-extrabold text-zinc-950 text-base sm:text-lg">Signal Inspector</span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
                 {signal.type}
               </span>
             </div>
 
             <button
+              type="button"
               suppressHydrationWarning
               onClick={onClose}
               className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-800 hover:bg-zinc-200 transition-colors cursor-pointer"
@@ -145,7 +146,7 @@ export function SignalDrawer({
           </div>
 
           {/* Drawer Scrollable Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6">
             {/* Title & Immutable Identity */}
             <div className="space-y-3">
               <h2 className="text-2xl font-extrabold text-zinc-950 leading-snug">
@@ -181,7 +182,7 @@ export function SignalDrawer({
             </div>
 
             {/* Date, Time & Projects */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
                 <span className="text-xs font-mono font-bold text-zinc-500 flex items-center mb-1 uppercase">
                   <Calendar className="h-3.5 w-3.5 mr-1 text-emerald-600" />
